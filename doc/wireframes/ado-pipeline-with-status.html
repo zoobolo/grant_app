@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADO Grant Pipeline - Spreadsheet View</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            font-size: 13px;
+        }
+        
+        /* Header */
+        .header {
+            background: #1e3a5f;
+            color: white;
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+        
+        /* Controls Bar */
+        .controls-bar {
+            background: white;
+            padding: 0.75rem 1rem;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .filter-row {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+        
+        .filter-item label {
+            font-size: 0.8125rem;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        select, input[type="text"] {
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 0.8125rem;
+            background: white;
+        }
+        
+        select {
+            min-width: 100px;
+        }
+        
+        .search-box {
+            width: 200px;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+        
+        .btn {
+            padding: 0.375rem 0.75rem;
+            border: 1px solid #1e3a5f;
+            background: white;
+            color: #1e3a5f;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8125rem;
+            transition: background 0.2s;
+        }
+        
+        .btn:hover {
+            background: #f0f0f0;
+        }
+        
+        .btn-primary {
+            background: #1e3a5f;
+            color: white;
+            border-color: #1e3a5f;
+        }
+        
+        .btn-primary:hover {
+            background: #2d4a7f;
+        }
+        
+        /* Table Container */
+        .table-container {
+            background: white;
+            overflow: auto;
+            height: calc(100vh - 120px);
+        }
+        
+        /* Spreadsheet Table */
+        .spreadsheet-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8125rem;
+        }
+        
+        .spreadsheet-table thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .spreadsheet-table th {
+            background: #e8e8e8;
+            padding: 0.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border: 1px solid #ccc;
+            white-space: nowrap;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .spreadsheet-table th:hover {
+            background: #ddd;
+        }
+        
+        .spreadsheet-table th.sortable::after {
+            content: ' ↕';
+            color: #999;
+            font-size: 0.75rem;
+        }
+        
+        .spreadsheet-table th.sorted-asc::after {
+            content: ' ↑';
+            color: #1e3a5f;
+        }
+        
+        .spreadsheet-table th.sorted-desc::after {
+            content: ' ↓';
+            color: #1e3a5f;
+        }
+        
+        .spreadsheet-table td {
+            padding: 0.375rem 0.5rem;
+            border: 1px solid #ddd;
+            background: white;
+        }
+        
+        .spreadsheet-table tbody tr:hover {
+            background: #f8f8f8;
+        }
+        
+        .spreadsheet-table tbody tr.selected {
+            background: #e7f3ff;
+        }
+        
+        /* Cell Styles */
+        .cell-locid {
+            font-weight: 600;
+            color: #1e3a5f;
+            text-align: center;
+        }
+        
+        .cell-grant-number {
+            font-weight: 600;
+            color: #1e3a5f;
+            cursor: pointer;
+            text-decoration: underline;
+            white-space: nowrap;
+        }
+        
+        .cell-grant-number:hover {
+            color: #4a9eff;
+        }
+        
+        .cell-airport {
+            font-weight: 500;
+        }
+        
+        .cell-cost {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+            white-space: nowrap;
+        }
+        
+        .cell-center {
+            text-align: center;
+        }
+        
+        /* Phase Status Pills */
+        .phase-pill {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        
+        .phase-planning {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .phase-preapp {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .phase-submitted {
+            background: #e9d5ff;
+            color: #6b21a8;
+        }
+        
+        /* Status Pills */
+        .status-pill {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        
+        .status-not-started {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .status-in-progress {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-documents-needed {
+            background: #fed7aa;
+            color: #9a3412;
+        }
+        
+        .status-review {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .status-address-comments {
+            background: #fde68a;
+            color: #78350f;
+        }
+        
+        .status-complete {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        /* Environmental Status */
+        .env-status {
+            display: inline-block;
+            padding: 0.125rem 0.375rem;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        
+        .env-complete {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .env-in-progress {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .env-not-started {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .env-na {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+        
+        /* Funding Type Badge */
+        .funding-badge {
+            display: inline-block;
+            padding: 0.125rem 0.375rem;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .funding-entitlement {
+            background: #e7f3ff;
+            color: #1e3a5f;
+        }
+        
+        .funding-discretionary {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .funding-bil {
+            background: #e9d5ff;
+            color: #6b21a8;
+        }
+        
+        /* SOAR Status */
+        .soar-status {
+            display: inline-block;
+            padding: 0.125rem 0.375rem;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .soar-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .soar-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .soar-none {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+        
+        /* Fixed Columns */
+        .fixed-column-1 {
+            position: sticky;
+            left: 0;
+            background: white;
+            z-index: 5;
+        }
+        
+        .fixed-column-2 {
+            position: sticky;
+            left: 60px;
+            background: white;
+            z-index: 5;
+        }
+        
+        thead .fixed-column-1,
+        thead .fixed-column-2 {
+            z-index: 11;
+        }
+        
+        /* Editable Cells */
+        .editable {
+            cursor: text;
+        }
+        
+        .editable:hover {
+            background: #fffbf0;
+            outline: 1px solid #fbbf24;
+            outline-offset: -1px;
+        }
+        
+        /* Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .loading-spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #1e3a5f;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            .spreadsheet-table {
+                font-size: 0.75rem;
+            }
+            
+            .spreadsheet-table th,
+            .spreadsheet-table td {
+                padding: 0.25rem 0.375rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1>ADO Grant Pipeline</h1>
+    </header>
+
+    <!-- Controls Bar -->
+    <div class="controls-bar">
+        <div class="filters">
+            <div class="filter-row">
+                <div class="filter-item">
+                    <label>FY:</label>
+                    <select>
+                        <option>2025</option>
+                        <option>2024</option>
+                        <option>2023</option>
+                        <option>All</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>LOCID:</label>
+                    <select>
+                        <option>All</option>
+                        <option>ATL</option>
+                        <option>SAV</option>
+                        <option>CHS</option>
+                        <option>GSP</option>
+                        <option>CAE</option>
+                        <option>AGS</option>
+                        <option>CSG</option>
+                        <option>ABY</option>
+                        <option>MCN</option>
+                        <option>BQK</option>
+                        <option>VLD</option>
+                        <option>SJU</option>
+                        <option>PSE</option>
+                        <option>STT</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>State:</label>
+                    <select>
+                        <option>All</option>
+                        <option>GA</option>
+                        <option>SC</option>
+                        <option>PR</option>
+                        <option>VI</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Phase:</label>
+                    <select>
+                        <option>All</option>
+                        <option>Planning</option>
+                        <option>Pre-app</option>
+                        <option>Submitted</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Status:</label>
+                    <select>
+                        <option>All</option>
+                        <option>Not Started</option>
+                        <option>In Progress</option>
+                        <option>Documents Needed</option>
+                        <option>Review</option>
+                        <option>Address Comments</option>
+                        <option>Complete</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Funding Type:</label>
+                    <select>
+                        <option>All</option>
+                        <option>Entitlement</option>
+                        <option>Discretionary</option>
+                        <option>BIL</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Env Status:</label>
+                    <select>
+                        <option>All</option>
+                        <option>Complete</option>
+                        <option>In Progress</option>
+                        <option>Not Started</option>
+                        <option>N/A</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>PM:</label>
+                    <select>
+                        <option>All</option>
+                        <option>R. Martinez</option>
+                        <option>J. Smith</option>
+                        <option>K. Davis</option>
+                        <option>M. Johnson</option>
+                        <option>T. Wilson</option>
+                        <option>L. Rodriguez</option>
+                        <option>A. Brown</option>
+                        <option>S. Thompson</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Planner:</label>
+                    <select>
+                        <option>All</option>
+                        <option>P. Anderson</option>
+                        <option>D. Miller</option>
+                        <option>B. Taylor</option>
+                        <option>C. White</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Search:</label>
+                    <input type="text" class="search-box" placeholder="Search...">
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary">+ Add Grant</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Container -->
+    <div class="table-container">
+        <table class="spreadsheet-table">
+            <thead>
+                <tr>
+                    <th class="fixed-column-1 sortable" style="width: 60px;">LOCID</th>
+                    <th class="fixed-column-2 sortable" style="width: 140px;">Airport Name</th>
+                    <th class="sortable" style="width: 50px;">State</th>
+                    <th class="sortable" style="width: 50px;">FY</th>
+                    <th class="sortable" style="width: 150px;">Grant Number</th>
+                    <th style="width: 250px;">Description</th>
+                    <th class="sortable" style="width: 100px;">Cost</th>
+                    <th class="sortable" style="width: 100px;">Project Type</th>
+                    <th class="sortable" style="width: 100px;">Funding Type</th>
+                    <th class="sortable" style="width: 80px;">Phase</th>
+                    <th class="sortable" style="width: 120px;">Status</th>
+                    <th class="sortable" style="width: 100px;">Env. Status</th>
+                    <th class="sortable" style="width: 100px;">Planner</th>
+                    <th class="sortable" style="width: 100px;">PM</th>
+                    <th class="sortable" style="width: 100px;">SOAR Status</th>
+                    <th style="width: 200px;">Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Example rows based on the CSV structure -->
+                <tr>
+                    <td class="fixed-column-1 cell-locid">CHS</td>
+                    <td class="fixed-column-2 cell-airport">Charleston Intl</td>
+                    <td class="cell-center">SC</td>
+                    <td class="cell-center">2025</td>
+                    <td><span class="cell-grant-number">3-45-0022-TBD-2025</span></td>
+                    <td class="editable">Runway 15/33 Rehabilitation and Taxiway B Realignment</td>
+                    <td class="cell-cost">$5,800,000</td>
+                    <td>Construction</td>
+                    <td><span class="funding-badge funding-discretionary">Discretionary</span></td>
+                    <td><span class="phase-pill phase-preapp">Pre-app</span></td>
+                    <td><span class="status-pill status-in-progress">In Progress</span></td>
+                    <td><span class="env-status env-not-started">Not Started</span></td>
+                    <td>P. Anderson</td>
+                    <td>R. Martinez</td>
+                    <td><span class="soar-status soar-none">-</span></td>
+                    <td class="editable">Environmental review deadline 1/28</td>
+                </tr>
+                
+                <tr>
+                    <td class="fixed-column-1 cell-locid">ATL</td>
+                    <td class="fixed-column-2 cell-airport">Hartsfield-Jackson</td>
+                    <td class="cell-center">GA</td>
+                    <td class="cell-center">2025</td>
+                    <td><span class="cell-grant-number">3-13-0003-TBD-2025</span></td>
+                    <td class="editable">Terminal Apron Expansion Phase 2</td>
+                    <td class="cell-cost">$2,500,000</td>
+                    <td>Construction</td>
+                    <td><span class="funding-badge funding-entitlement">Entitlement</span></td>
+                    <td><span class="phase-pill phase-planning">Planning</span></td>
+                    <td><span class="status-pill status-not-started">Not Started</span></td>
+                    <td><span class="env-status env-in-progress">In Progress</span></td>
+                    <td>D. Miller</td>
+                    <td>M. Johnson</td>
+                    <td><span class="soar-status soar-none">-</span></td>
+                    <td class="editable">Coordination with airline tenants ongoing</td>
+                </tr>
+
+                <tr>
+                    <td class="fixed-column-1 cell-locid">SJU</td>
+                    <td class="fixed-column-2 cell-airport">San Juan</td>
+                    <td class="cell-center">PR</td>
+                    <td class="cell-center">2025</td>
+                    <td><span class="cell-grant-number">3-72-0001-TBD-2025</span></td>
+                    <td class="editable">Taxiway A Rehabilitation</td>
+                    <td class="cell-cost">$3,200,000</td>
+                    <td>Construction</td>
+                    <td><span class="funding-badge funding-bil">BIL</span></td>
+                    <td><span class="phase-pill phase-preapp">Pre-app</span></td>
+                    <td><span class="status-pill status-documents-needed">Documents Needed</span></td>
+                    <td><span class="env-status env-complete">Complete</span></td>
+                    <td>B. Taylor</td>
+                    <td>L. Rodriguez</td>
+                    <td><span class="soar-status soar-none">-</span></td>
+                    <td class="editable">Ready for application submission</td>
+                </tr>
+
+                <tr>
+                    <td class="fixed-column-1 cell-locid">GSP</td>
+                    <td class="fixed-column-2 cell-airport">Greenville-Spartanburg</td>
+                    <td class="cell-center">SC</td>
+                    <td class="cell-center">2025</td>
+                    <td><span class="cell-grant-number">3-45-0019-042-2025</span></td>
+                    <td class="editable">Runway 4/22 Extension - 1000ft</td>
+                    <td class="cell-cost">$8,100,000</td>
+                    <td>Construction</td>
+                    <td><span class="funding-badge funding-discretionary">Discretionary</span></td>
+                    <td><span class="phase-pill phase-submitted">Submitted</span></td>
+                    <td><span class="status-pill status-review">Review</span></td>
+                    <td><span class="env-status env-complete">Complete</span></td>
+                    <td>P. Anderson</td>
+                    <td>J. Smith</td>
+                    <td><span class="soar-status soar-pending">Pending</span></td>
+                    <td class="editable">ADO review in progress</td>
+                </tr>
+
+                <tr>
+                    <td class="fixed-column-1 cell-locid">MCN</td>
+                    <td class="fixed-column-2 cell-airport">Macon Downtown</td>
+                    <td class="cell-center">GA</td>
+                    <td class="cell-center">2025</td>
+                    <td><span class="cell-grant-number">3-13-0011-043-2025</span></td>
+                    <td class="editable">GA Ramp Expansion and Rehabilitation</td>
+                    <td class="cell-cost">$4,200,000</td>
+                    <td>Construction</td>
+                    <td><span class="funding-badge funding-discretionary">Discretionary</span></td>
+                    <td><span class="phase-pill phase-submitted">Submitted</span></td>
+                    <td><span class="status-pill status-complete">Complete</span></td>
+                    <td><span class="env-status env-complete">Complete</span></td>
+                    <td>D. Miller</td>
+                    <td>K. Davis</td>
+                    <td><span class="soar-status soar-active">Active</span></td>
+                    <td class="editable">Awaiting HQ approval</td>
+                </tr>
+
+                <tr>
+                    <td class="fixed-column-1 cell-locid">SAV</td>
+                    <td class="fixed-column-2 cell-airport">Savannah/Hilton Head</td>
+                    <td class="cell-center">GA</td>
+                    <td class="cell-center">2025</td>
+                    <td><span class="cell-grant-number">3-13-0015-TBD-2025</span></td>
+                    <td class="editable">Runway 10/28 Design</td>
+                    <td class="cell-cost">$850,000</td>
+                    <td>Design</td>
+                    <td><span class="funding-badge funding-entitlement">Entitlement</span></td>
+                    <td><span class="phase-pill phase-planning">Planning</span></td>
+                    <td><span class="status-pill status-in-progress">In Progress</span></td>
+                    <td><span class="env-status env-na">N/A</span></td>
+                    <td>D. Miller</td>
+                    <td>K. Davis</td>
+                    <td><span class="soar-status soar-none">-</span></td>
+                    <td class="editable">Consultant selection in progress</td>
+                </tr>
+
+                <tr>
+                    <td class="fixed-column-1 cell-locid">STT</td>
+                    <td class="fixed-column-2 cell-airport">St. Thomas</td>
+                    <td class="cell-center">VI</td>
+                    <td class="cell-center">2025</td>
+                    <td><span class="cell-grant-number">3-78-0002-TBD-2025</span></td>
+                    <td class="editable">ARFF Vehicle Replacement</td>
+                    <td class="cell-cost">$1,500,000</td>
+                    <td>Equipment</td>
+                    <td><span class="funding-badge funding-bil">BIL</span></td>
+                    <td><span class="phase-pill phase-preapp">Pre-app</span></td>
+                    <td><span class="status-pill status-address-comments">Address Comments</span></td>
+                    <td><span class="env-status env-na">N/A</span></td>
+                    <td>C. White</td>
+                    <td>A. Brown</td>
+                    <td><span class="soar-status soar-none">-</span></td>
+                    <td class="editable">Specifications under review</td>
+                </tr>
+
+                <tr>
+                    <td class="fixed-column-1 cell-locid">BQK</td>
+                    <td class="fixed-column-2 cell-airport">Brunswick Golden Isles</td>
+                    <td class="cell-center">GA</td>
+                    <td class="cell-center">2025</td>
+                    <td><span class="cell-grant-number">3-13-0006-038-2025</span></td>
+                    <td class="editable">Runway Safety Area Improvements</td>
+                    <td class="cell-cost">$7,300,000</td>
+                    <td>Construction</td>
+                    <td><span class="funding-badge funding-discretionary">Discretionary</span></td>
+                    <td><span class="phase-pill phase-submitted">Submitted</span></td>
+                    <td><span class="status-pill status-complete">Complete</span></td>
+                    <td><span class="env-status env-complete">Complete</span></td>
+                    <td>D. Miller</td>
+                    <td>T. Wilson</td>
+                    <td><span class="soar-status soar-active">Active</span></td>
+                    <td class="editable">Regional concurrence received</td>
+                </tr>
+
+                <tr>
+                    <td class="fixed-column-1 cell-locid">CAE</td>
+                    <td class="fixed-column-2 cell-airport">Columbia Metro</td>
+                    <td class="cell-center">SC</td>
+                    <td class="cell-center">2025</td>
+                    <td><span class="cell-grant-number">3-45-0009-032-2025</span></td>
+                    <td class="editable">Taxiway C Rehabilitation</td>
+                    <td class="cell-cost">$3,800,000</td>
+                    <td>Construction</td>
+                    <td><span class="funding-badge funding-entitlement">Entitlement</span></td>
+                    <td><span class="phase-pill phase-submitted">Submitted</span></td>
+                    <td><span class="status-pill status-complete">Complete</span></td>
+                    <td><span class="env-status env-complete">Complete</span></td>
+                    <td>P. Anderson</td>
+                    <td>R. Martinez</td>
+                    <td><span class="soar-status soar-active">Active</span></td>
+                    <td class="editable">Grant executed 1/23/25</td>
+                </tr>
+
+                <tr>
+                    <td class="fixed-column-1 cell-locid">AGS</td>
+                    <td class="fixed-column-2 cell-airport">Augusta Regional</td>
+                    <td class="cell-center">GA</td>
+                    <td class="cell-center">2025</td>
+                    <td><span class="cell-grant-number">3-13-0041-TBD-2025</span></td>
+                    <td class="editable">Master Plan Update</td>
+                    <td class="cell-cost">$420,000</td>
+                    <td>Planning</td>
+                    <td><span class="funding-badge funding-entitlement">Entitlement</span></td>
+                    <td><span class="phase-pill phase-planning">Planning</span></td>
+                    <td><span class="status-pill status-documents-needed">Documents Needed</span></td>
+                    <td><span class="env-status env-na">N/A</span></td>
+                    <td>B. Taylor</td>
+                    <td>S. Thompson</td>
+                    <td><span class="soar-status soar-none">-</span></td>
+                    <td class="editable">Scope development with consultant</td>
+                </tr>
+
+                <tr>
+                    <td class="fixed-column-1 cell-locid">ABY</td>
+                    <td class="fixed-column-2 cell-airport">Albany Southwest</td>
+                    <td class="cell-center">GA</td>
+                    <td class="cell-center">2025</td>
+                    <td><span class="cell-grant-number">3-13-0028-TBD-2025</span></td>
+                    <td class="editable">Apron Reconstruction Phase 1</td>
+                    <td class="cell-cost">$2,900,000</td>
+                    <td>Construction</td>
+                    <td><span class="funding-badge funding-bil">BIL</span></td>
+                    <td><span class="phase-pill phase-preapp">Pre-app</span></td>
+                    <td><span class="status-pill status-in-progress">In Progress</span></td>
+                    <td><span class="env-status env-in-progress">In Progress</span></td>
+                    <td>D. Miller</td>
+                    <td>M. Johnson</td>
+                    <td><span class="soar-status soar-none">-</span></td>
+                    <td class="editable">Bid documents being prepared</td>
+                </tr>
+
+                <tr>
+                    <td class="fixed-column-1 cell-locid">CSG</td>
+                    <td class="fixed-column-2 cell-airport">Columbus Metro</td>
+                    <td class="cell-center">GA</td>
+                    <td class="cell-center">2025</td>
+                    <td><span class="cell-grant-number">3-13-0008-TBD-2025</span></td>
+                    <td class="editable">Snow Removal Equipment</td>
+                    <td class="cell-cost">$1,200,000</td>
+                    <td>Equipment</td>
+                    <td><span class="funding-badge funding-entitlement">Entitlement</span></td>
+                    <td><span class="phase-pill phase-planning">Planning</span></td>
+                    <td><span class="status-pill status-not-started">Not Started</span></td>
+                    <td><span class="env-status env-na">N/A</span></td>
+                    <td>B. Taylor</td>
+                    <td>T. Wilson</td>
+                    <td><span class="soar-status soar-none">-</span></td>
+                    <td class="editable">Equipment specifications review</td>
+                </tr>
+
+                <tr>
+                    <td class="fixed-column-1 cell-locid">VLD</td>
+                    <td class="fixed-column-2 cell-airport">Valdosta Regional</td>
+                    <td class="cell-center">GA</td>
+                    <td class="cell-center">2025</td>
+                    <td><span class="cell-grant-number">3-13-0012-039-2025</span></td>
+                    <td class="editable">Terminal Building Design</td>
+                    <td class="cell-cost">$950,000</td>
+                    <td>Design</td>
+                    <td><span class="funding-badge funding-discretionary">Discretionary</span></td>
+                    <td><span class="phase-pill phase-submitted">Submitted</span></td>
+                    <td><span class="status-pill status-review">Review</span></td>
+                    <td><span class="env-status env-na">N/A</span></td>
+                    <td>B. Taylor</td>
+                    <td>S. Thompson</td>
+                    <td><span class="soar-status soar-active">Active</span></td>
+                    <td class="editable">30% design review scheduled</td>
+                </tr>
+
+                <tr>
+                    <td class="fixed-column-1 cell-locid">PSE</td>
+                    <td class="fixed-column-2 cell-airport">Ponce</td>
+                    <td class="cell-center">PR</td>
+                    <td class="cell-center">2025</td>
+                    <td><span class="cell-grant-number">3-72-0005-018-2025</span></td>
+                    <td class="editable">Perimeter Fencing Upgrade</td>
+                    <td class="cell-cost">$6,500,000</td>
+                    <td>Construction</td>
+                    <td><span class="funding-badge funding-bil">BIL</span></td>
+                    <td><span class="phase-pill phase-submitted">Submitted</span></td>
+                    <td><span class="status-pill status-address-comments">Address Comments</span></td>
+                    <td><span class="env-status env-complete">Complete</span></td>
+                    <td>C. White</td>
+                    <td>L. Rodriguez</td>
+                    <td><span class="soar-status soar-pending">Pending</span></td>
+                    <td class="editable">Security assessment complete</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script>
+        // Simple sorting functionality
+        document.querySelectorAll('th.sortable').forEach(header => {
+            header.addEventListener('click', function() {
+                // Toggle sort direction
+                if (this.classList.contains('sorted-asc')) {
+                    this.classList.remove('sorted-asc');
+                    this.classList.add('sorted-desc');
+                } else if (this.classList.contains('sorted-desc')) {
+                    this.classList.remove('sorted-desc');
+                } else {
+                    // Remove sort from other columns
+                    document.querySelectorAll('th').forEach(th => {
+                        th.classList.remove('sorted-asc', 'sorted-desc');
+                    });
+                    this.classList.add('sorted-asc');
+                }
+                console.log('Sorting by:', this.textContent);
+            });
+        });
+
+        // Row selection
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('click', function(e) {
+                // Toggle selection
+                document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        // Grant number click to view details
+        document.querySelectorAll('.cell-grant-number').forEach(grant => {
+            grant.addEventListener('click', function(e) {
+                e.stopPropagation();
+                console.log('Opening grant:', this.textContent);
+                // This would navigate to the grant detail view
+            });
+        });
+
+        // Editable cells
+        document.querySelectorAll('.editable').forEach(cell => {
+            cell.addEventListener('dblclick', function() {
+                const currentText = this.textContent;
+                const input = document.createElement('textarea');
+                input.value = currentText;
+                input.style.width = '100%';
+                input.style.padding = '0.25rem';
+                input.style.border = '2px solid #1e3a5f';
+                input.style.fontSize = '0.8125rem';
+                input.style.fontFamily = 'inherit';
+                input.rows = 2;
+                
+                this.innerHTML = '';
+                this.appendChild(input);
+                input.focus();
+                input.select();
+                
+                const saveEdit = () => {
+                    const newValue = input.value;
+                    this.textContent = newValue;
+                    console.log('Saved:', newValue);
+                };
+                
+                input.addEventListener('blur', saveEdit);
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        saveEdit();
+                    }
+                    if (e.key === 'Escape') {
+                        this.textContent = currentText;
+                    }
+                });
+            });
+        });
+
+        // Filter functionality
+        document.querySelectorAll('select, .search-box').forEach(filter => {
+            filter.addEventListener('change', function() {
+                console.log('Filter changed:', this.previousElementSibling?.textContent, this.value);
+                // Implement filtering logic here
+            });
+        });
+    </script>
+</body>
+</html>

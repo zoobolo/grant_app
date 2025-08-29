@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Grant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            font-size: 13px;
+        }
+        
+        /* Header */
+        .header {
+            background: #1e3a5f;
+            color: white;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 1.25rem;
+            font-weight: 500;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .header-back {
+            position: absolute;
+            left: 1rem;
+        }
+        
+        .btn-back {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 0.375rem 0.75rem;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8125rem;
+        }
+        
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 800px;
+            margin: 1.5rem auto;
+            padding: 0 1rem;
+        }
+        
+        /* Form Card */
+        .form-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .form-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-section h2 {
+            font-size: 1rem;
+            color: #1e3a5f;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.375rem;
+        }
+        
+        .form-field.full-width {
+            grid-column: span 2;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #666;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+        
+        .required {
+            color: #dc3545;
+        }
+        
+        .form-input,
+        .form-select,
+        .form-textarea {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 0.875rem;
+            font-family: inherit;
+        }
+        
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #1e3a5f;
+        }
+        
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        /* Grant Number Display */
+        .grant-number-display {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e3a5f;
+        }
+        
+        .grant-number-input {
+            width: 60px;
+            padding: 0.375rem;
+            border: 1px solid #1e3a5f;
+            border-radius: 3px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #1e3a5f;
+            text-align: center;
+        }
+        
+        /* Projects Section */
+        .project-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 3px;
+            margin-bottom: 1rem;
+        }
+        
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        
+        .project-title {
+            font-weight: 600;
+            color: #1e3a5f;
+        }
+        
+        .btn-remove {
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #dc3545;
+            background: white;
+            color: #dc3545;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+        
+        .btn-remove:hover {
+            background: #fff5f5;
+        }
+        
+        .btn-add-project {
+            padding: 0.5rem 1rem;
+            border: 1px dashed #1e3a5f;
+            background: white;
+            color: #1e3a5f;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+        
+        .btn-add-project:hover {
+            background: #f8f9fa;
+        }
+        
+        /* Helper Text */
+        .helper-text {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+        
+        /* Total Cost Display */
+        .total-cost {
+            background: #e7f3ff;
+            padding: 1rem;
+            border-radius: 3px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+        
+        .total-label {
+            font-weight: 600;
+            color: #1e3a5f;
+        }
+        
+        .total-amount {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1e3a5f;
+            font-family: 'Courier New', monospace;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e5e5e5;
+        }
+        
+        .btn-cancel {
+            padding: 0.5rem 1.5rem;
+            border: 1px solid #ccc;
+            background: white;
+            color: #666;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+        
+        .btn-cancel:hover {
+            background: #f8f9fa;
+        }
+        
+        .btn-create {
+            padding: 0.5rem 1.5rem;
+            background: #1e3a5f;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+        
+        .btn-create:hover {
+            background: #2d4a7f;
+        }
+        
+        /* Info Box */
+        .info-box {
+            background: #fef3c7;
+            border-left: 3px solid #f59e0b;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 0.8125rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-back">
+            <button class="btn-back">← Back to Pipeline</button>
+        </div>
+        <h1>Create New Grant</h1>
+    </header>
+
+    <!-- Container -->
+    <div class="container">
+        <div class="form-card">
+            <!-- Grant Identification -->
+            <div class="form-section">
+                <h2>Grant Identification</h2>
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label class="form-label">LOCID <span class="required">*</span></label>
+                        <select class="form-select" id="locid">
+                            <option value="">Select Airport...</option>
+                            <option value="ATL">ATL - Hartsfield-Jackson</option>
+                            <option value="SAV">SAV - Savannah/Hilton Head</option>
+                            <option value="CHS">CHS - Charleston International</option>
+                            <option value="GSP">GSP - Greenville-Spartanburg</option>
+                            <option value="CAE">CAE - Columbia Metro</option>
+                            <option value="AGS">AGS - Augusta Regional</option>
+                            <option value="CSG">CSG - Columbus Metro</option>
+                            <option value="ABY">ABY - Albany Southwest</option>
+                            <option value="MCN">MCN - Macon Downtown</option>
+                            <option value="BQK">BQK - Brunswick Golden Isles</option>
+                            <option value="VLD">VLD - Valdosta Regional</option>
+                            <option value="SJU">SJU - San Juan</option>
+                            <option value="PSE">PSE - Ponce</option>
+                            <option value="STT">STT - St. Thomas</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label class="form-label">Fiscal Year <span class="required">*</span></label>
+                        <select class="form-select" id="fy">
+                            <option value="2025" selected>2025</option>
+                            <option value="2026">2026</option>
+                            <option value="2027">2027</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label class="form-label">Grant Number</label>
+                        <div class="grant-number-display">
+                            <span id="grant-prefix">-</span>
+                            <input type="text" class="grant-number-input" value="TBD" placeholder="###">
+                            <span id="grant-suffix">-2025</span>
+                        </div>
+                        <div class="helper-text">Auto-generated. Replace TBD with number when assigned.</div>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label class="form-label">Funding Type <span class="required">*</span></label>
+                        <select class="form-select" id="funding">
+                            <option value="">Select...</option>
+                            <option value="Entitlement">Entitlement</option>
+                            <option value="Discretionary">Discretionary</option>
+                            <option value="BIL">BIL</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects -->
+            <div class="form-section">
+                <h2>Projects</h2>
+                <div class="info-box">
+                    Add one or more projects to this grant. The total grant cost will be calculated automatically.
+                </div>
+                
+                <div id="projects-container">
+                    <div class="project-item">
+                        <div class="project-header">
+                            <div class="project-title">Project 1</div>
+                            <button class="btn-remove">Remove</button>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label class="form-label">Project Type <span class="required">*</span></label>
+                                <select class="form-select">
+                                    <option value="">Select...</option>
+                                    <option value="Construction">Construction</option>
+                                    <option value="Design">Design</option>
+                                    <option value="Planning">Planning</option>
+                                    <option value="Equipment">Equipment</option>
+                                    <option value="Land">Land</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label class="form-label">Project Cost <span class="required">*</span></label>
+                                <input type="text" class="form-input" placeholder="$0.00">
+                            </div>
+                            <div class="form-field full-width">
+                                <label class="form-label">Project Description <span class="required">*</span></label>
+                                <input type="text" class="form-input" placeholder="Enter project description...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn-add-project">+ Add Another Project</button>
+                
+                <div class="total-cost">
+                    <div class="total-label">Total Grant Cost:</div>
+                    <div class="total-amount">$0.00</div>
+                </div>
+            </div>
+
+            <!-- Assignment -->
+            <div class="form-section">
+                <h2>Assignment</h2>
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label class="form-label">Program Manager <span class="required">*</span></label>
+                        <select class="form-select">
+                            <option value="">Select...</option>
+                            <option value="R. Martinez">R. Martinez</option>
+                            <option value="J. Smith">J. Smith</option>
+                            <option value="K. Davis">K. Davis</option>
+                            <option value="M. Johnson">M. Johnson</option>
+                            <option value="T. Wilson">T. Wilson</option>
+                            <option value="L. Rodriguez">L. Rodriguez</option>
+                            <option value="A. Brown">A. Brown</option>
+                            <option value="S. Thompson">S. Thompson</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label class="form-label">Planner <span class="required">*</span></label>
+                        <select class="form-select">
+                            <option value="">Select...</option>
+                            <option value="P. Anderson">P. Anderson</option>
+                            <option value="D. Miller">D. Miller</option>
+                            <option value="B. Taylor">B. Taylor</option>
+                            <option value="C. White">C. White</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label class="form-label">Initial Phase <span class="required">*</span></label>
+                        <select class="form-select">
+                            <option value="Planning" selected>Planning</option>
+                            <option value="Formulation">Formulation</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label class="form-label">Environmental Status</label>
+                        <select class="form-select">
+                            <option value="Not Started" selected>Not Started</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Complete">Complete</option>
+                            <option value="N/A">N/A</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="form-section">
+                <h2>Initial Notes</h2>
+                <div class="form-field">
+                    <label class="form-label">Notes</label>
+                    <textarea class="form-textarea" placeholder="Add any initial notes or comments..."></textarea>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn-cancel">Cancel</button>
+                <button class="btn-create">Create Grant</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update grant number when LOCID or FY changes
+        document.getElementById('locid').addEventListener('change', function() {
+            updateGrantNumber();
+        });
+        
+        document.getElementById('fy').addEventListener('change', function() {
+            updateGrantNumber();
+            document.getElementById('grant-suffix').textContent = '-' + this.value;
+        });
+        
+        function updateGrantNumber() {
+            const locid = document.getElementById('locid').value;
+            const fy = document.getElementById('fy').value;
+            
+            if (locid) {
+                // Generate prefix based on LOCID
+                // This is simplified - actual logic would depend on state/region codes
+                const stateMap = {
+                    'ATL': '3-13-0003',
+                    'SAV': '3-13-0015',
+                    'CHS': '3-45-0022',
+                    'GSP': '3-45-0019',
+                    'CAE': '3-45-0009',
+                    'AGS': '3-13-0041',
+                    'CSG': '3-13-0008',
+                    'ABY': '3-13-0028',
+                    'MCN': '3-13-0011',
+                    'BQK': '3-13-0006',
+                    'VLD': '3-13-0012',
+                    'SJU': '3-72-0001',
+                    'PSE': '3-72-0005',
+                    'STT': '3-78-0002'
+                };
+                
+                document.getElementById('grant-prefix').textContent = stateMap[locid] + '-';
+            } else {
+                document.getElementById('grant-prefix').textContent = '-';
+            }
+        }
+        
+        // Add project functionality
+        let projectCount = 1;
+        
+        document.querySelector('.btn-add-project').addEventListener('click', function() {
+            projectCount++;
+            const projectHtml = `
+                <div class="project-item">
+                    <div class="project-header">
+                        <div class="project-title">Project ${projectCount}</div>
+                        <button class="btn-remove">Remove</button>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label class="form-label">Project Type <span class="required">*</span></label>
+                            <select class="form-select">
+                                <option value="">Select...</option>
+                                <option value="Construction">Construction</option>
+                                <option value="Design">Design</option>
+                                <option value="Planning">Planning</option>
+                                <option value="Equipment">Equipment</option>
+                                <option value="Land">Land</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label class="form-label">Project Cost <span class="required">*</span></label>
+                            <input type="text" class="form-input cost-input" placeholder="$0.00">
+                        </div>
+                        <div class="form-field full-width">
+                            <label class="form-label">Project Description <span class="required">*</span></label>
+                            <input type="text" class="form-input" placeholder="Enter project description...">
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const container = document.getElementById('projects-container');
+            container.insertAdjacentHTML('beforeend', projectHtml);
+            attachRemoveHandlers();
+            attachCostHandlers();
+        });
+        
+        // Remove project functionality
+        function attachRemoveHandlers() {
+            document.querySelectorAll('.btn-remove').forEach(btn => {
+                btn.onclick = function() {
+                    if (document.querySelectorAll('.project-item').length > 1) {
+                        this.closest('.project-item').remove();
+                        updateProjectNumbers();
+                        updateTotalCost();
+                    } else {
+                        alert('At least one project is required');
+                    }
+                };
+            });
+        }
+        
+        // Update project numbers after removal
+        function updateProjectNumbers() {
+            document.querySelectorAll('.project-item').forEach((item, index) => {
+                item.querySelector('.project-title').textContent = `Project ${index + 1}`;
+            });
+            projectCount = document.querySelectorAll('.project-item').length;
+        }
+        
+        // Calculate total cost
+        function attachCostHandlers() {
+            document.querySelectorAll('.form-input[placeholder="$0.00"]').forEach(input => {
+                input.addEventListener('input', updateTotalCost);
+            });
+        }
+        
+        function updateTotalCost() {
+            let total = 0;
+            document.querySelectorAll('.form-input[placeholder="$0.00"]').forEach(input => {
+                const value = input.value.replace(/[^0-9.]/g, '');
+                if (value) {
+                    total += parseFloat(value);
+                }
+            });
+            
+            document.querySelector('.total-amount').textContent = 
+                '$' + total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+        
+        // Initialize handlers
+        attachRemoveHandlers();
+        attachCostHandlers();
+        
+        // Form submission
+        document.querySelector('.btn-create').addEventListener('click', function() {
+            // Validate required fields
+            const required = document.querySelectorAll('.form-select:required, .form-input:required');
+            let valid = true;
+            
+            // In real implementation, would validate and submit
+            console.log('Creating grant...');
+            alert('Grant created successfully!');
+        });
+        
+        document.querySelector('.btn-cancel').addEventListener('click', function() {
+            if (confirm('Are you sure you want to cancel? All entered data will be lost.')) {
+                // Return to pipeline
+                console.log('Returning to pipeline...');
+            }
+        });
+    </script>
+</body>
+</html>

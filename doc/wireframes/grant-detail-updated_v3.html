@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grant Detail</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            font-size: 13px;
+        }
+        
+        /* Header */
+        .header {
+            background: #1e3a5f;
+            color: white;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 1.25rem;
+            font-weight: 500;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .header-back {
+            position: absolute;
+            left: 1rem;
+        }
+        
+        .btn-back {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 0.375rem 0.75rem;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8125rem;
+        }
+        
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1000px;
+            margin: 1rem auto;
+            padding: 0 1rem;
+        }
+        
+        /* Grant Info Card */
+        .grant-info {
+            background: white;
+            padding: 1.25rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        
+        .grant-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+        
+        .grant-title-section {
+            flex: 1;
+        }
+        
+        .grant-number-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .grant-number {
+            font-size: 1.25rem;
+            color: #1e3a5f;
+            font-weight: 600;
+        }
+        
+        .tbd-input {
+            width: 60px;
+            padding: 0.25rem;
+            border: 1px solid #1e3a5f;
+            border-radius: 3px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e3a5f;
+        }
+        
+        .grant-description {
+            font-size: 0.875rem;
+            color: #666;
+            margin-bottom: 0.25rem;
+        }
+        
+        .companion-info {
+            background: #e7f3ff;
+            padding: 0.5rem;
+            border-radius: 3px;
+            margin-bottom: 0.75rem;
+            font-size: 0.8125rem;
+        }
+        
+        .companion-link {
+            color: #1e3a5f;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-action {
+            padding: 0.375rem 0.75rem;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8125rem;
+        }
+        
+        .btn-action:hover {
+            background: #f8f9fa;
+        }
+        
+        .btn-new {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+        
+        .btn-new:hover {
+            background: #218838;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+        
+        .info-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #666;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+        
+        .info-value {
+            color: #333;
+            padding: 0.25rem 0;
+        }
+        
+        .info-value.readonly {
+            background: #f8f9fa;
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.8125rem;
+        }
+        
+        select.editable-field {
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 0.8125rem;
+            background: white;
+            width: 100%;
+        }
+        
+        input.editable-field {
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 0.8125rem;
+            width: 100%;
+        }
+        
+        /* Projects Section */
+        .projects-section {
+            background: #f8f9fa;
+            padding: 0.75rem;
+            border-radius: 3px;
+            margin-top: 1rem;
+        }
+        
+        .projects-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .projects-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .project-item {
+            background: white;
+            padding: 0.5rem;
+            border-radius: 3px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .project-details {
+            flex: 1;
+        }
+        
+        .project-type {
+            font-weight: 600;
+            color: #1e3a5f;
+            font-size: 0.8125rem;
+        }
+        
+        .project-desc {
+            font-size: 0.8125rem;
+            color: #666;
+        }
+        
+        .project-cost {
+            font-weight: 600;
+            color: #333;
+            margin-left: 1rem;
+        }
+        
+        .btn-add-project {
+            padding: 0.25rem 0.5rem;
+            border: 1px dashed #999;
+            background: white;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+        
+        /* Requirements Section */
+        .requirements {
+            background: white;
+            padding: 1.25rem;
+            border-radius: 4px;
+        }
+        
+        .requirements h2 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: #1e3a5f;
+        }
+        
+        /* Requirements Table */
+        .req-table {
+            width: 100%;
+        }
+        
+        .req-row {
+            display: flex;
+            align-items: start;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .req-row:last-child {
+            border-bottom: none;
+        }
+        
+        .req-label {
+            flex: 0 0 250px;
+            font-size: 0.875rem;
+            padding-top: 0.375rem;
+        }
+        
+        .req-controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .control-row {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+        
+        .comment-input {
+            flex: 1;
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 0.8125rem;
+        }
+        
+        /* Document List */
+        .doc-list {
+            background: #f8f9fa;
+            border-radius: 3px;
+            padding: 0.5rem;
+            font-size: 0.8125rem;
+        }
+        
+        .doc-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.375rem 0;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        
+        .doc-item:last-child {
+            border-bottom: none;
+        }
+        
+        .doc-name {
+            flex: 1;
+            color: #1e3a5f;
+        }
+        
+        .doc-meta {
+            color: #666;
+            font-size: 0.75rem;
+            margin: 0 0.75rem;
+        }
+        
+        .doc-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-small {
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+        
+        .btn-small:hover {
+            background: #f8f9fa;
+        }
+        
+        .btn-review {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+            padding: 0.375rem 0.75rem;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8125rem;
+        }
+        
+        .btn-review:hover {
+            background: #0056b3;
+        }
+        
+        /* Form Controls */
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        select.dropdown {
+            padding: 0.375rem 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 0.8125rem;
+            background: white;
+            min-width: 150px;
+        }
+        
+        .upload-btn {
+            padding: 0.375rem 0.75rem;
+            border: 1px solid #1e3a5f;
+            background: white;
+            color: #1e3a5f;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8125rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+        
+        .upload-btn:hover {
+            background: #f8f9fa;
+        }
+        
+        /* Status styles - Updated for new Status values */
+        .status-pill {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        
+        /* Phase styles */
+        .phase-planning {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .phase-preapp {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .phase-submitted {
+            background: #e9d5ff;
+            color: #6b21a8;
+        }
+        
+        /* Status styles */
+        .status-not-started {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .status-in-progress {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-documents-needed {
+            background: #fed7aa;
+            color: #9a3412;
+        }
+        
+        .status-review {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .status-address-comments {
+            background: #fde68a;
+            color: #78350f;
+        }
+        
+        .status-complete {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        /* Environmental Status */
+        .env-status {
+            display: inline-block;
+            padding: 0.125rem 0.375rem;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        
+        .env-complete {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .env-in-progress {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .env-not-started {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .env-na {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+        
+        /* Funding Type Badge */
+        .funding-badge {
+            display: inline-block;
+            padding: 0.125rem 0.375rem;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .funding-entitlement {
+            background: #e7f3ff;
+            color: #1e3a5f;
+        }
+        
+        .funding-discretionary {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .funding-bil {
+            background: #e9d5ff;
+            color: #6b21a8;
+        }
+        
+        /* SOAR Status */
+        .soar-status {
+            display: inline-block;
+            padding: 0.125rem 0.375rem;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .soar-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .soar-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .soar-none {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+        
+        /* Text Areas */
+        .notes-box {
+            width: 100%;
+            min-height: 50px;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-family: inherit;
+            font-size: 0.8125rem;
+        }
+        
+        .comments-box {
+            width: 100%;
+            min-height: 80px;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-family: inherit;
+            font-size: 0.8125rem;
+        }
+        
+        /* Save Button */
+        .save-section {
+            margin-top: 1.25rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid #e5e5e5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .save-info {
+            font-size: 0.75rem;
+            color: #666;
+        }
+        
+        .btn-save {
+            padding: 0.5rem 1.5rem;
+            background: #1e3a5f;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+        
+        .btn-save:hover {
+            background: #2d4a7f;
+        }
+        
+        /* No documents placeholder */
+        .no-docs {
+            color: #999;
+            font-style: italic;
+            font-size: 0.8125rem;
+            padding: 0.375rem 0;
+        }
+        
+        /* Comments List Styles */
+        .comments-list {
+            background: #f8f9fa;
+            border-radius: 3px;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .comment-item {
+            background: white;
+            padding: 0.75rem;
+            border-radius: 3px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .comment-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.375rem;
+        }
+        
+        .comment-author {
+            font-weight: 600;
+            color: #1e3a5f;
+            font-size: 0.8125rem;
+        }
+        
+        .comment-date {
+            color: #999;
+            font-size: 0.75rem;
+        }
+        
+        .comment-text {
+            color: #333;
+            font-size: 0.8125rem;
+            line-height: 1.4;
+        }
+        
+        .new-comment-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .new-comment-box {
+            width: 100%;
+            min-height: 60px;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-family: inherit;
+            font-size: 0.8125rem;
+            resize: vertical;
+        }
+        
+        .btn-add-comment {
+            align-self: flex-start;
+            padding: 0.375rem 0.75rem;
+            background: #1e3a5f;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8125rem;
+        }
+        
+        .btn-add-comment:hover {
+            background: #2d4a7f;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-back">
+            <button class="btn-back">← Back to Pipeline</button>
+        </div>
+        <h1>Grant Detail</h1>
+    </header>
+
+    <!-- Container -->
+    <div class="container">
+        <!-- Grant Info -->
+        <div class="grant-info">
+            <div class="grant-header">
+                <div class="grant-title-section">
+                    <div class="grant-number-row">
+                        <span class="grant-number">3-45-0022-</span>
+                        <input type="text" class="tbd-input" value="TBD" placeholder="###">
+                        <span class="grant-number">-2025</span>
+                    </div>
+                    <div class="grant-description">CHS - Charleston International, SC</div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-action">+ Companion Grant (BIL)</button>
+                </div>
+            </div>
+
+            <!-- Companion Grant Notice -->
+            <div class="companion-info">
+                ℹ️ This grant has a companion BIL grant: <span class="companion-link">3-45-0022-004-2025-BIL</span> (shares common data)
+            </div>
+            
+            <!-- Projects Section -->
+            <div class="projects-section">
+                <div class="projects-header">
+                    <div class="projects-title">Projects in this Grant (Total: $5,800,000)</div>
+                    <button class="btn-add-project">+ Add Project</button>
+                </div>
+                <div class="project-item">
+                    <div class="project-details">
+                        <div class="project-type">Construction</div>
+                        <div class="project-desc">Runway 15/33 Rehabilitation</div>
+                    </div>
+                    <div class="project-cost">$5,300,000</div>
+                </div>
+                <div class="project-item">
+                    <div class="project-details">
+                        <div class="project-type">Equipment</div>
+                        <div class="project-desc">Snow Removal Equipment</div>
+                    </div>
+                    <div class="project-cost">$500,000</div>
+                </div>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-field">
+                    <label class="info-label">FY</label>
+                    <div class="info-value readonly">2025</div>
+                </div>
+                <div class="info-field">
+                    <label class="info-label">Cost</label>
+                    <div class="info-value readonly" style="font-family: 'Courier New', monospace; font-weight: 600;">$5,800,000</div>
+                </div>
+                <div class="info-field">
+                    <label class="info-label">Project Type</label>
+                    <div class="info-value readonly">Construction/Equipment</div>
+                </div>
+                <div class="info-field">
+                    <label class="info-label">Funding Type</label>
+                    <select class="editable-field">
+                        <option>Entitlement</option>
+                        <option selected>Discretionary</option>
+                        <option>BIL</option>
+                    </select>
+                </div>
+                <div class="info-field">
+                    <label class="info-label">Phase</label>
+                    <select class="editable-field">
+                        <option>Planning</option>
+                        <option selected>Pre-app</option>
+                        <option>Submitted</option>
+                    </select>
+                </div>
+                <div class="info-field">
+                    <label class="info-label">Status</label>
+                    <select class="editable-field">
+                        <option>Not Started</option>
+                        <option selected>In Progress</option>
+                        <option>Documents Needed</option>
+                        <option>Review</option>
+                        <option>Address Comments</option>
+                        <option>Complete</option>
+                    </select>
+                </div>
+                <div class="info-field">
+                    <label class="info-label">Planner</label>
+                    <select class="editable-field">
+                        <option selected>P. Anderson</option>
+                        <option>D. Miller</option>
+                        <option>B. Taylor</option>
+                        <option>C. White</option>
+                    </select>
+                </div>
+                <div class="info-field">
+                    <label class="info-label">PM</label>
+                    <select class="editable-field">
+                        <option selected>R. Martinez</option>
+                        <option>J. Smith</option>
+                        <option>K. Davis</option>
+                        <option>M. Johnson</option>
+                        <option>T. Wilson</option>
+                        <option>L. Rodriguez</option>
+                        <option>A. Brown</option>
+                        <option>S. Thompson</option>
+                    </select>
+                </div>
+                <div class="info-field">
+                    <label class="info-label">SOAR Status</label>
+                    <div class="info-value readonly">
+                        <span class="soar-status soar-pending">ADO-1 Review</span>
+                        <div style="font-size: 0.7rem; color: #666; margin-top: 0.25rem;">Updated: 01/25/25</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Requirements -->
+        <div class="requirements">
+            <h2>Grant Requirements & Documents</h2>
+            
+            <div class="req-table">
+                <div class="req-row">
+                    <div class="req-label">Approaches Clear</div>
+                    <div class="req-controls">
+                        <div class="control-row">
+                            <input type="checkbox" checked>
+                            <input type="text" class="comment-input" placeholder="Add comment..." value="20:1 clear reported by airport manager">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="req-row">
+                    <div class="req-label">5 Year ACIP</div>
+                    <div class="req-controls">
+                        <div class="control-row">
+                            <button class="upload-btn">+ Upload Document</button>
+                        </div>
+                        <div class="doc-list">
+                            <div class="doc-item">
+                                <span class="doc-name">5yr_ACIP_2025_v2.pdf</span>
+                                <span class="doc-meta">Uploaded 12/10/24</span>
+                                <div class="doc-actions">
+                                    <button class="btn-small">View</button>
+                                    <button class="btn-small">Delete</button>
+                                </div>
+                            </div>
+                            <div class="doc-item">
+                                <span class="doc-name">5yr_ACIP_2025_v1.pdf</span>
+                                <span class="doc-meta">Uploaded 11/15/24</span>
+                                <div class="doc-actions">
+                                    <button class="btn-small">View</button>
+                                    <button class="btn-small">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="req-row">
+                    <div class="req-label">Initial CIP Package</div>
+                    <div class="req-controls">
+                        <div class="control-row">
+                            <button class="upload-btn">+ Upload Document</button>
+                        </div>
+                        <div class="no-docs">No documents uploaded</div>
+                    </div>
+                </div>
+
+                <div class="req-row">
+                    <div class="req-label">Environmental Status/Document</div>
+                    <div class="req-controls">
+                        <div class="control-row">
+                            <select class="dropdown">
+                                <option>Not Started</option>
+                                <option selected>In Progress</option>
+                                <option>Complete</option>
+                                <option>N/A</option>
+                            </select>
+                            <button class="upload-btn">+ Upload Document</button>
+                        </div>
+                        <div class="doc-list">
+                            <div class="doc-item">
+                                <span class="doc-name">Environmental_CATEX_Draft.pdf</span>
+                                <span class="doc-meta">Uploaded 01/05/25</span>
+                                <div class="doc-actions">
+                                    <button class="btn-small">View</button>
+                                    <button class="btn-small">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="req-row">
+                    <div class="req-label">Pre-application</div>
+                    <div class="req-controls">
+                        <div class="control-row">
+                            <button class="upload-btn">+ Upload Document</button>
+                        </div>
+                        <div class="no-docs">No documents uploaded</div>
+                    </div>
+                </div>
+
+                <div class="req-row">
+                    <div class="req-label">Pre-grant Conference</div>
+                    <div class="req-controls">
+                        <div class="control-row">
+                            <button class="upload-btn">+ Upload Document</button>
+                        </div>
+                        <div class="no-docs">No documents uploaded</div>
+                    </div>
+                </div>
+
+                <div class="req-row">
+                    <div class="req-label">PERADA</div>
+                    <div class="req-controls">
+                        <div class="control-row">
+                            <button class="upload-btn">+ Upload Document</button>
+                        </div>
+                        <div class="no-docs">No documents uploaded</div>
+                    </div>
+                </div>
+
+                <div class="req-row">
+                    <div class="req-label">Scope of Work Confirmed</div>
+                    <div class="req-controls">
+                        <div class="control-row">
+                            <input type="checkbox">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="req-row">
+                    <div class="req-label">Bids Received</div>
+                    <div class="req-controls">
+                        <div class="control-row">
+                            <input type="checkbox" checked>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="req-row">
+                    <div class="req-label">Independent Fee Estimate</div>
+                    <div class="req-controls">
+                        <div class="control-row">
+                            <input type="checkbox">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="req-row">
+                    <div class="req-label">CSPP - Airspace</div>
+                    <div class="req-controls">
+                        <div class="control-row">
+                            <input type="checkbox">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="req-row">
+                    <div class="req-label">Application Received</div>
+                    <div class="req-controls">
+                        <div class="control-row">
+                            <button class="upload-btn">+ Upload Document</button>
+                        </div>
+                        <div class="doc-list">
+                            <div class="doc-item">
+                                <span class="doc-name">SF424_Application_Final.pdf</span>
+                                <span class="doc-meta">Uploaded 01/20/25</span>
+                                <div class="doc-actions">
+                                    <button class="btn-small">View</button>
+                                    <button class="btn-small">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="req-row">
+                    <div class="req-label">Sponsor Certifications</div>
+                    <div class="req-controls">
+                        <div class="control-row">
+                            <button class="upload-btn">+ Upload Document</button>
+                        </div>
+                        <div class="doc-list">
+                            <div class="doc-item">
+                                <span class="doc-name">Sponsor_Certification_2025.pdf</span>
+                                <span class="doc-meta">Uploaded 01/18/25</span>
+                                <div class="doc-actions">
+                                    <button class="btn-small">View</button>
+                                    <button class="btn-small">Delete</button>
+                                </div>
+                            </div>
+                            <div class="doc-item">
+                                <span class="doc-name">DBE_Certification.pdf</span>
+                                <span class="doc-meta">Uploaded 01/18/25</span>
+                                <div class="doc-actions">
+                                    <button class="btn-small">View</button>
+                                    <button class="btn-small">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="req-row">
+                    <div class="req-label">Review Comments</div>
+                    <div class="req-controls">
+                        <textarea class="comments-box" placeholder="Enter review comments...">Need updated cost estimates. Environmental documentation incomplete - missing Section 106 consultation. Verify local match commitment letter is signed.</textarea>
+                        <div class="control-row" style="margin-top: 0.5rem;">
+                            <input type="checkbox" id="comments-addressed">
+                            <label for="comments-addressed" style="font-size: 0.8125rem; color: #666;">PM has addressed all comments</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="req-row">
+                    <div class="req-label">Notes</div>
+                    <div class="req-controls">
+                        <textarea class="notes-box" placeholder="Short notes for pipeline view...">Environmental deadline 1/28</textarea>
+                    </div>
+                </div>
+
+                <div class="req-row">
+                    <div class="req-label">Internal Comments</div>
+                    <div class="req-controls">
+                        <div class="comments-list">
+                            <div class="comment-item">
+                                <div class="comment-header">
+                                    <span class="comment-author">J. Smith</span>
+                                    <span class="comment-date">01/20/25 3:45 PM</span>
+                                </div>
+                                <div class="comment-text">Environmental review deadline 1/28. Need to follow up with sponsor on local match commitment.</div>
+                            </div>
+                            <div class="comment-item">
+                                <div class="comment-header">
+                                    <span class="comment-author">R. Martinez</span>
+                                    <span class="comment-date">01/22/25 10:15 AM</span>
+                                </div>
+                                <div class="comment-text">Airport manager confirmed approaches are clear with 20:1 surface.</div>
+                            </div>
+                            <div class="comment-item">
+                                <div class="comment-header">
+                                    <span class="comment-author">P. Anderson</span>
+                                    <span class="comment-date">01/25/25 2:30 PM</span>
+                                </div>
+                                <div class="comment-text">Waiting on updated cost estimates from engineering consultant. Should have by end of week.</div>
+                            </div>
+                        </div>
+                        <div class="new-comment-section">
+                            <textarea class="new-comment-box" placeholder="Add a new comment..."></textarea>
+                            <button class="btn-add-comment">Add Comment</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="save-section">
+                <div class="save-info">Last saved: 08/29/2025 4:12 PM by J. Smith</div>
+                <button class="btn-save">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
